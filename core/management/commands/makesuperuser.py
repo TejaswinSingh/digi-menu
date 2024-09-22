@@ -1,21 +1,23 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
-from django.utils.crypto import get_random_string
+import environ
 
 User = get_user_model()
+env = environ.Env(  
+    DEBUG=(bool, False)  
+)
 
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        email = 'admin@example.com'
-        new_password = get_random_string(10)
+        email = env("ADMIN_EMAIL", default='admin@example.com')
+        new_password = env("ADMIN_PASSWORD", default='admin@123')
         try:
             if not User.objects.filter(is_superuser=True).exists():
                 self.stdout.write("No superusers found, creating one")
-                User.objects.create_superuser(username='admin', email=email, password=new_password)
+                User.objects.create_superuser(email=email, password=new_password)
                 self.stdout.write("=======================")
                 self.stdout.write("A superuser has been created")
-                self.stdout.write("Username: admin")
                 self.stdout.write(f"Email: {email}")
                 self.stdout.write(f"Password: {new_password}")
 
