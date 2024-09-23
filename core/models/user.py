@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.html import format_html
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -41,6 +42,7 @@ class User(AbstractUser):
 
     username = None
     email = models.EmailField(_('email address'), unique=True)
+    picture = models.URLField(default='')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -54,9 +56,19 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 class UserAdmin(DjangoUserAdmin):
     """Define admin model for custom User model with no email field."""
 
+    def user_image(self, obj):
+        if obj.picture:
+            return format_html(
+                '<img src="{}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" referrerpolicy="no-referrer" />',
+                obj.picture
+            )
+        return "No Image"
+    
+    user_image.short_description = 'Profile Picture'
+
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name')}),
+        (_('Personal info'), {'fields': ('user_image', 'first_name', 'last_name')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
@@ -69,4 +81,5 @@ class UserAdmin(DjangoUserAdmin):
     )
     list_display = ('email', 'first_name', 'last_name', 'is_staff')
     search_fields = ('email', 'first_name', 'last_name')
+    readonly_fields = ('user_image',)
     ordering = ('email',)

@@ -115,6 +115,10 @@ LOGGING = {
     "loggers": {"": {"handlers": ["console"], "level": "DEBUG"}},  
 }
 
+# We need these lines below to allow the Google sign in popup to work.
+SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 

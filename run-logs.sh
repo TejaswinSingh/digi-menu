@@ -1,3 +1,3 @@
 #!/bin/bash
 set -e
-gunicorn project.wsgi --log-file - --access-logfile -
+gunicorn project.wsgi --reload --log-file - --access-logfile -

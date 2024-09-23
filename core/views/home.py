@@ -1,6 +1,5 @@
 from django.shortcuts import (
-    render, 
-    HttpResponse
+    HttpResponse,
 )
 
 def home(request):
